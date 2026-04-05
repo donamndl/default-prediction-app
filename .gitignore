@@ -1,0 +1,61 @@
+# -------------------------
+
+# Frontend (React + Vite)
+
+# -------------------------
+
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env
+
+# -------------------------
+
+# Backend (Flask)
+
+# -------------------------
+
+backend/**pycache**/
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+backend/*.sqlite3
+backend/.env
+backend/instance/
+
+# Virtual environments
+
+venv/
+env/
+.venv/
+
+# Ignore entire models folder
+
+backend/models/
+ 
+# -------------------------
+
+# Logs
+
+# -------------------------
+
+*.log
+
+# -------------------------
+
+# OS / IDE
+
+# -------------------------
+
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# -------------------------
+
+# Misc
+
+# -------------------------
+
+*.lock
