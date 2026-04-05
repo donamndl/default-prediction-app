@@ -1,0 +1,13 @@
+pandas
+numpy
+scikit-learn==1.7.0
+matplotlib
+seaborn
+openpyxl
+joblib
+flask
+flask_cors
+flask_pymongo
+functools
+uuid
+python-dotenv
