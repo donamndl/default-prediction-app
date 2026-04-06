@@ -1,102 +1,32 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect, createContext, useContext } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { FormProvider } from './context/FormContext'
+import FormContainer from './pages/FormContainer'
+import './App.css'
+
+export const ThemeContext = createContext(null)
+export const useTheme = () => useContext(ThemeContext)
 
 function App() {
-  const [formData, setFormData] = useState({
-    age: "",
-    income: "",
-    loan_amount: ""
-  });
+  const [theme, setTheme] = useState(() => localStorage.getItem('cs-theme') || 'dark')
 
-  const [result, setResult] = useState(null);
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('cs-theme', theme)
+  }, [theme])
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await axios.post(
-        "http://127.0.0.1:5000/predict",
-        formData
-      );
-
-      setResult(response.data);
-    } catch (error) {
-      console.error(error);
-      alert("Error connecting to backend");
-    }
-  };
+  const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark')
 
   return (
-    <div style={styles.container}>
-      <h1>Loan Default Prediction</h1>
-
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input
-          type="number"
-          name="age"
-          placeholder="Enter Age"
-          value={formData.age}
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          type="number"
-          name="income"
-          placeholder="Enter Income"
-          value={formData.income}
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          type="number"
-          name="loan_amount"
-          placeholder="Enter Loan Amount"
-          value={formData.loan_amount}
-          onChange={handleChange}
-          required
-        />
-
-        <button type="submit">Predict</button>
-      </form>
-
-      {result && (
-        <div style={styles.result}>
-          <h3>Result</h3>
-          <p><b>Prediction:</b> {result.prediction}</p>
-          <p><b>Score:</b> {result.score}</p>
-          <p><b>Probability:</b> {result.probability}</p>
-        </div>
-      )}
-    </div>
-  );
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      <FormProvider>
+        <Routes>
+          <Route path="/" element={<FormContainer />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </FormProvider>
+    </ThemeContext.Provider>
+  )
 }
 
-const styles = {
-  container: {
-    textAlign: "center",
-    marginTop: "50px"
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    width: "300px",
-    margin: "auto",
-    gap: "10px"
-  },
-  result: {
-    marginTop: "20px",
-    padding: "10px",
-    border: "1px solid #ccc"
-  }
-};
-
-export default App;
+export default App
