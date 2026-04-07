@@ -4,7 +4,8 @@
 
 .form-page {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;         /* lock to viewport — no overflow gap */
+  overflow: hidden;      /* sidebar + main scroll independently */
   background: var(--bg-primary);
 }
 
@@ -14,15 +15,12 @@
 
 .sidebar {
   width: 260px;
-  min-height: 100vh;
+  height: 100vh;
   background: var(--bg-secondary);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   padding: 28px 0;
-  position: sticky;
-  top: 0;
-  height: 100vh;
   overflow-y: auto;
   flex-shrink: 0;
 }
@@ -204,16 +202,17 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  width: 0;          /* forces flex child to not exceed available space */
-  min-width: 0;
+  height: 100vh;
+  overflow: hidden;
+  min-width: 0;            /* prevents flex blowout */
+  background: var(--bg-primary);
 }
 
 .form-topbar {
-  padding: 28px 40px 0;
-  margin-bottom: 8px;
-  max-width: 860px;
+  padding: 32px 48px 0;
+  margin-bottom: 10px;
   width: 100%;
+  flex-shrink: 0;
 }
 
 .topbar-row {
@@ -221,6 +220,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
+  width: 100%;
 }
 
 .topbar-step-num {
@@ -284,49 +284,204 @@
   box-shadow: 1px 0 0 var(--border);
 }
 
+/* Inputs & selects — always use full dark text in light mode */
 [data-theme="light"] .field-select,
 [data-theme="light"] .field-input {
   color: var(--text-primary);
+  background: var(--bg-input);
 }
 
 [data-theme="light"] .field-select option {
-  background: var(--bg-card);
-  color: var(--text-primary);
+  background: #ffffff;
+  color: #0d1117;
 }
 
+/* Placeholder text */
+[data-theme="light"] .field-input::placeholder {
+  color: #a0aab8;
+}
+
+/* Toggle & radio buttons — dark text, visible borders */
 [data-theme="light"] .toggle-btn,
 [data-theme="light"] .radio-btn {
   background: var(--bg-input);
+  color: var(--text-secondary);
+  border-color: var(--border);
 }
 
+[data-theme="light"] .toggle-btn:hover,
+[data-theme="light"] .radio-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+/* Field labels — fully dark */
+[data-theme="light"] .field-label {
+  color: #1a202c;
+}
+
+[data-theme="light"] .field-hint {
+  color: #718096;
+}
+
+/* Subsection labels */
+[data-theme="light"] .subsection-label {
+  color: var(--accent-blue);
+  border-bottom-color: var(--border);
+}
+
+/* Section header */
+[data-theme="light"] .section-header {
+  background: #f7f9ff;
+  border-color: var(--border);
+}
+
+[data-theme="light"] .section-title {
+  color: #0d1117;
+}
+
+[data-theme="light"] .section-subtitle {
+  color: #2d3748;
+}
+
+/* Score preview card */
+[data-theme="light"] .score-preview-card {
+  background: #f7f9ff;
+  border-color: var(--border);
+}
+
+[data-theme="light"] .score-preview-label {
+  color: #718096;
+}
+
+[data-theme="light"] .score-preview-desc {
+  color: #718096;
+}
+
+/* Score breakdown row */
 [data-theme="light"] .score-breakdown-row {
   background: var(--bg-input);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .sbi-label {
+  color: #718096;
+}
+
+[data-theme="light"] .sbi-sub {
+  color: #718096;
+}
+
+/* Nav items */
+[data-theme="light"] .nav-item {
+  color: #718096;
 }
 
 [data-theme="light"] .nav-active {
   background: rgba(61,106,255,0.08) !important;
+  color: #0d1117 !important;
 }
 
+[data-theme="light"] .nav-complete {
+  color: #2d3748 !important;
+}
+
+[data-theme="light"] .nav-step-num {
+  background: #f0f2f8;
+  border-color: var(--border);
+  color: #2d3748;
+}
+
+/* Logo */
+[data-theme="light"] .logo-tagline {
+  color: #718096;
+}
+
+/* Sidebar footer */
+[data-theme="light"] .sidebar-progress-label {
+  color: #718096;
+}
+
+[data-theme="light"] .sidebar-score-note {
+  color: #718096;
+}
+
+[data-theme="light"] .sidebar-progress-bar {
+  background: var(--border);
+}
+
+/* Footer */
+[data-theme="light"] .form-footer {
+  background: #ffffff;
+  border-top-color: var(--border);
+}
+
+/* Step dots */
+[data-theme="light"] .step-dot {
+  background: var(--border);
+}
+
+/* Callouts */
 [data-theme="light"] .caution-warning-banner {
   background: rgba(255,77,106,0.05);
 }
 
+[data-theme="light"] .caution-warning-banner strong {
+  color: #e03354;
+}
+
+[data-theme="light"] .caution-warning-banner p {
+  color: #2d3748;
+}
+
 [data-theme="light"] .info-callout {
   background: rgba(61,106,255,0.05);
+  color: #2d3748;
 }
 
 [data-theme="light"] .info-callout-amber {
   background: rgba(255,176,32,0.05);
 }
 
+/* Bureau score display */
+[data-theme="light"] .bureau-score-display {
+  background: #f7f9ff;
+  border-color: var(--border);
+}
+
+/* Topbar */
+[data-theme="light"] .topbar-step-num {
+  color: var(--accent-blue);
+}
+
+[data-theme="light"] .topbar-step-title {
+  color: #0d1117;
+}
+
+/* Theme toggle button itself */
+[data-theme="light"] .theme-toggle-btn {
+  background: #ffffff;
+  border-color: var(--border);
+  color: #2d3748;
+}
+
+/* Noise overlay — barely visible in light mode */
 [data-theme="light"] body::before {
-  opacity: 0.1;
+  opacity: 0.06;
 }
 
 .form-body {
   flex: 1;
-  padding: 24px 40px;
-  max-width: 860px;
+  overflow-y: auto;
+  padding: 28px 48px 36px;
+  width: 100%;
+}
+
+/* step-content fills full available width — no max-width cap */
+.step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
   width: 100%;
 }
 
@@ -335,15 +490,14 @@
 ═══════════════════════════════════════════════ */
 
 .form-footer {
-  padding: 20px 40px 32px;
+  padding: 20px 48px 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid var(--border);
   gap: 16px;
   background: var(--bg-secondary);
-  border-radius: 0 0 0 0;
-  margin-top: auto;
+  flex-shrink: 0;
 }
 
 .footer-step-dots {
@@ -457,16 +611,12 @@
    STEP CONTENT
 ═══════════════════════════════════════════════ */
 
-.step-content {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
+/* step-content defined above near form-body — max-width: 860px */
 
 .fields-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 /* ═══════════════════════════════════════════════
@@ -477,7 +627,7 @@
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  padding: 20px;
+  padding: 22px 24px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -522,7 +672,7 @@
 
 .field-grid {
   display: grid;
-  gap: 16px;
+  gap: 20px;
 }
 
 .field-grid-1 { grid-template-columns: 1fr; }
@@ -532,15 +682,15 @@
 .field-wrap {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   animation: fadeIn 0.3s ease forwards;
 }
 
 .field-label {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-label);
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -561,7 +711,7 @@
 
 .field-select {
   width: 100%;
-  padding: 10px 36px 10px 14px;
+  padding: 12px 36px 12px 16px;
   background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -600,7 +750,7 @@
 
 .field-input {
   width: 100%;
-  padding: 10px 14px;
+  padding: 12px 16px;
   background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -663,14 +813,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 9px 16px;
+  gap: 7px;
+  padding: 11px 16px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--bg-input);
   color: var(--text-secondary);
   font-family: var(--font-body);
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition);
@@ -705,13 +855,13 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 10px 18px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--bg-input);
   color: var(--text-secondary);
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition);
@@ -1361,17 +1511,29 @@
 ═══════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
-  .sidebar { display: none; }
+  /* On mobile, revert to normal scroll flow */
+  .form-page {
+    height: auto;
+    overflow: visible;
+  }
 
-  .form-main { max-width: 100%; }
+  .form-main {
+    height: auto;
+    overflow: visible;
+  }
+
+  .form-body {
+    overflow-y: visible;
+    padding: 20px;
+  }
+
+  .sidebar { display: none; }
 
   .form-topbar {
     padding: 20px 20px 0;
   }
 
   .topbar-mobile-progress { display: block; }
-
-  .form-body { padding: 20px; }
 
   .form-footer {
     padding: 16px 20px 24px;
@@ -1388,7 +1550,7 @@
 
   .topbar-step-title { font-size: 20px; }
 
-  /* On mobile, hide toggle label, keep icon only */
+  /* On mobile, hide toggle label — keep icon only */
   .theme-toggle-btn span { display: none; }
   .theme-toggle-btn { padding: 8px 10px; }
 }
