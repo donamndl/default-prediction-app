@@ -46,19 +46,20 @@
 
 /* ─── Light Mode ───────────────────────────────────────────────────── */
 [data-theme="light"] {
-  --bg-primary:    #f0f2f7;
+  --bg-primary:    #eef1f7;
   --bg-secondary:  #ffffff;
   --bg-card:       #ffffff;
-  --bg-card-hover: #f5f7fc;
-  --bg-input:      #f8f9fc;
-  --border:        #dde2ee;
+  --bg-card-hover: #f4f6fb;
+  --bg-input:      #f7f8fc;
+  --border:        #d4d9e8;
   --border-focus:  #3d6aff;
   --border-active: #5b7fff;
 
-  --text-primary:   #0f1623;
-  --text-secondary: #4a5578;
-  --text-muted:     #9aa3bc;
-  --text-label:     #6b7a99;
+  /* Much darker text — fully opaque so no blur effect */
+  --text-primary:   #0d1117;
+  --text-secondary: #2d3748;
+  --text-muted:     #718096;
+  --text-label:     #1a202c;
 
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
   --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
