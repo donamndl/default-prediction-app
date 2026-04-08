@@ -246,6 +246,15 @@
   margin-top: 20px;
 }
 
+/* ─── Topbar Actions Group ─── */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
 /* ─── Theme Toggle Button ─── */
 .theme-toggle-btn {
   display: flex;
@@ -263,7 +272,6 @@
   transition: all var(--transition);
   white-space: nowrap;
   flex-shrink: 0;
-  margin-top: 4px;
 }
 
 .theme-toggle-btn svg {
@@ -276,7 +284,65 @@
   background: var(--bg-card-hover);
   color: var(--text-primary);
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(61,106,255,0.08);
+}
+
+/* ─── User Chip ─── */
+.topbar-user-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 5px 5px 10px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  flex-shrink: 0;
+}
+
+.topbar-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--gradient-blue);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.topbar-username {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-logout-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.topbar-logout-btn svg { width: 14px; height: 14px; }
+
+.topbar-logout-btn:hover {
+  background: rgba(255,77,106,0.1);
+  border-color: rgba(255,77,106,0.3);
+  color: #ff4d6a;
 }
 
 /* Light mode overrides for specific components that need extra attention */
@@ -1553,6 +1619,8 @@
   /* On mobile, hide toggle label — keep icon only */
   .theme-toggle-btn span { display: none; }
   .theme-toggle-btn { padding: 8px 10px; }
+  .topbar-username { display: none; }
+  .topbar-user-chip { padding: 5px; }
 }
 
 @media (max-width: 480px) {
