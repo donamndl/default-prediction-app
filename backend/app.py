@@ -32,6 +32,7 @@ from db        import (
     get_dashboard_stats,
     delete_application,
 )
+from auth import auth_bp
 
 load_dotenv()
 
@@ -41,6 +42,7 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000', 'http://127.0.0.1:3000'])
+app.register_blueprint(auth_bp)
 
 
 # ─────────────────────────────────────────────
