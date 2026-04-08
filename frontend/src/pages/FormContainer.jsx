@@ -3,6 +3,7 @@ import { useForm } from '../context/FormContext'
 import { validateStep } from '../utils/validation'
 import { submitApplication } from '../utils/api'
 import { useTheme } from '../App'
+import { useAuth } from '../context/AuthContext'
 import StepProgress from '../components/ui/StepProgress'
 import Step1Family from '../components/forms/Step1Family'
 import Step2Residence from '../components/forms/Step2Residence'
@@ -42,6 +43,7 @@ const FormContainer = () => {
   } = useForm()
 
   const { theme, toggleTheme } = useTheme()
+  const { user, logout } = useAuth()
 
   if (result) return <ResultsPage />
 
@@ -147,26 +149,47 @@ const FormContainer = () => {
               <span className="topbar-step-num">Step {currentStep} of 7</span>
               <h1 className="topbar-step-title">{STEP_TITLES[currentStep]}</h1>
             </div>
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="theme-toggle-btn"
-              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            >
-              {theme === 'dark' ? (
-                /* Sun icon */
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                  <circle cx="12" cy="12" r="4"/>
-                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
-                </svg>
-              ) : (
-                /* Moon icon */
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                  <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
-                </svg>
+            <div className="topbar-actions">
+              {/* Theme toggle */}
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="theme-toggle-btn"
+                title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              >
+                {theme === 'dark' ? (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+                  </svg>
+                )}
+                <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+              </button>
+
+              {/* User chip */}
+              {user && (
+                <div className="topbar-user-chip">
+                  <div className="topbar-avatar">
+                    {user.name?.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="topbar-username">{user.name}</span>
+                  <button
+                    type="button"
+                    className="topbar-logout-btn"
+                    onClick={logout}
+                    title="Sign out"
+                  >
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                      <path d="M13 7l3 3m0 0l-3 3m3-3H8m4-7H5a2 2 0 00-2 2v10a2 2 0 002 2h7"/>
+                    </svg>
+                  </button>
+                </div>
               )}
-              <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-            </button>
+            </div>
           </div>
           <div className="topbar-mobile-progress">
             <StepProgress currentStep={currentStep} onStepClick={goToStep} />
