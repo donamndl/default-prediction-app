@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../App'
 
@@ -24,6 +25,7 @@ const AuthInput = ({ label, type = 'text', value, onChange, placeholder, error, 
 /* ─── Login Form ───────────────────────────────────────────────────── */
 const LoginForm = ({ onSwitch }) => {
   const { login } = useAuth()
+  const navigate = useNavigate()
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors]     = useState({})
@@ -47,7 +49,7 @@ const LoginForm = ({ onSwitch }) => {
     setLoading(true)
     try {
       await login({ email, password })
-      // AuthContext updates user → App re-renders → redirect handled by route
+      navigate('/', { replace: true })   // ← navigate to form after login
     } catch (err) {
       setApiError(err?.response?.data?.message || 'Invalid email or password')
     } finally {
@@ -116,6 +118,7 @@ const LoginForm = ({ onSwitch }) => {
 /* ─── Register Form ────────────────────────────────────────────────── */
 const RegisterForm = ({ onSwitch }) => {
   const { register } = useAuth()
+  const navigate = useNavigate()
   const [name, setName]         = useState('')
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
@@ -145,6 +148,7 @@ const RegisterForm = ({ onSwitch }) => {
     setLoading(true)
     try {
       await register({ name, email, password })
+      navigate('/', { replace: true })   // ← navigate to form after register
     } catch (err) {
       setApiError(err?.response?.data?.message || 'Registration failed. Please try again.')
     } finally {
@@ -287,15 +291,15 @@ const AuthPage = () => {
       {/* Left panel — branding */}
       <div className="auth-left">
         <div className="auth-left-content">
-          <div className="auth-brand">
+          <div className="auth-brand animate-fade-in">
             <div className="auth-brand-logo">
               <svg viewBox="0 0 40 40" fill="none">
-                <rect width="40" height="40" rx="10" fill="url(#authLogoGrad)"/>
-                <path d="M10 28l7-12 5 7 4-5 6 10" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect width="40" height="40" rx="10" fill="url(#authLogoGrad)" />
+                <path d="M10 28l7-12 5 7 4-5 6 10" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                 <defs>
                   <linearGradient id="authLogoGrad" x1="0" y1="0" x2="40" y2="40">
-                    <stop offset="0%" stopColor="#3d6aff"/>
-                    <stop offset="100%" stopColor="#00d4ff"/>
+                    <stop offset="0%" stopColor="#3d6aff" />
+                    <stop offset="100%" stopColor="#00d4ff" />
                   </linearGradient>
                 </defs>
               </svg>
@@ -307,24 +311,41 @@ const AuthPage = () => {
           </div>
 
           <div className="auth-hero">
-            <h1 className="auth-hero-title">
-              Smart credit<br />
-              decisions,<br />
-              <span className="auth-hero-accent">faster.</span>
+            <div className="animate-fade-in" style={{
+              display: 'inline-block',
+              padding: '4px 12px',
+              borderRadius: '20px',
+              background: 'rgba(61, 106, 255, 0.1)',
+              color: 'var(--accent-blue)',
+              fontSize: '11px',
+              fontWeight: '700',
+              marginBottom: '16px',
+              border: '1px solid rgba(61, 106, 255, 0.2)',
+              letterSpacing: '0.5px',
+              textTransform: 'uppercase'
+            }}>
+              ✨ v2.4 AI Risk Engine Live
+            </div>
+
+            <h1 className="auth-hero-title animate-slide-up">
+              Precision lending. <br />
+              Smart <span className="auth-hero-accent">decisions.</span>
             </h1>
-            <p className="auth-hero-desc">
-              ML-powered credit risk assessment combining a 350-point scorecard with predictive analytics — built for modern lenders.
+
+            <p className="auth-hero-desc animate-slide-up" style={{ animationDelay: '100ms' }}>
+              Deploy high-performance credit models in minutes. Our proprietary 350-point
+              scorecard uses predictive ML to automate risk assessment for modern lenders.
             </p>
           </div>
 
-          <div className="auth-stats">
+          <div className="auth-stats stagger">
             {[
-              { value: '350', label: 'Scorecard Points' },
-              { value: '51',  label: 'Risk Variables'   },
-              { value: '4',   label: 'Approval Levels'  },
-            ].map(s => (
+              { value: '350', label: 'Scorecard Points', color: 'var(--accent-blue)' },
+              { value: '51', label: 'Risk Variables', color: 'var(--accent-cyan)' },
+              { value: '4', label: 'Approval Levels', color: 'var(--accent-green)' },
+            ].map((s, i) => (
               <div key={s.label} className="auth-stat">
-                <div className="auth-stat-value">{s.value}</div>
+                <div className="auth-stat-value" style={{ color: s.color }}>{s.value}</div>
                 <div className="auth-stat-label">{s.label}</div>
               </div>
             ))}
