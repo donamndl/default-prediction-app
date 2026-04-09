@@ -105,30 +105,34 @@
 }
 
 /* Hero text */
-.auth-hero { margin-bottom: 48px; }
+.auth-hero { 
+  margin-bottom: 48px; 
+}
 
 .auth-hero-title {
   font-family: var(--font-display);
-  font-size: 48px;
+  font-size: 3.8rem; /* Slightly larger */
   font-weight: 800;
   color: var(--text-primary);
-  line-height: 1.1;
-  letter-spacing: -1.5px;
-  margin-bottom: 20px;
+  line-height: 1.05; /* Tighter line height for that modern look */
+  letter-spacing: -0.04em; /* Tight letter spacing is key to the Fintech aesthetic */
+  margin-bottom: 1.5rem;
 }
 
 .auth-hero-accent {
-  background: linear-gradient(135deg, #3d6aff, #00d4ff);
+  background: var(--gradient-blue); /* Using your variable from index.css */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  display: inline-block;
 }
 
 .auth-hero-desc {
-  font-size: 15px;
+  font-size: 1.1rem; /* Slightly larger for better readability */
   color: var(--text-secondary);
-  line-height: 1.7;
-  max-width: 360px;
+  line-height: 1.6;
+  max-width: 400px; /* Widened slightly to balance the larger header */
+  font-weight: 450;
 }
 
 /* Stats row */
