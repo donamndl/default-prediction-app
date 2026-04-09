@@ -11,13 +11,22 @@ export const ThemeContext = createContext(null)
 export const useTheme = () => useContext(ThemeContext)
 
 /* ─── Protected Route ─────────────────────────────────────────────────
-   If user is not logged in → redirect to /login
-   If still checking localStorage (loading) → show nothing
+   Guards the form page — if not logged in, send to /login
 ──────────────────────────────────────────────────────────────────────── */
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth()
-  if (loading) return null          // avoid flash of wrong page
+  if (loading) return null
   if (!user)   return <Navigate to="/login" replace />
+  return children
+}
+
+/* ─── Public Route ────────────────────────────────────────────────────
+   Guards login/register — if already logged in, send to /
+──────────────────────────────────────────────────────────────────────── */
+const PublicRoute = ({ children }) => {
+  const { user, loading } = useAuth()
+  if (loading) return null
+  if (user)    return <Navigate to="/" replace />
   return children
 }
 
@@ -36,9 +45,9 @@ function App() {
       <AuthProvider>
         <FormProvider>
           <Routes>
-            {/* Public: login / register */}
-            <Route path="/login"    element={<AuthPage />} />
-            <Route path="/register" element={<AuthPage />} />
+            {/* Public: login / register — redirect to / if already logged in */}
+            <Route path="/login"    element={<PublicRoute><AuthPage /></PublicRoute>} />
+            <Route path="/register" element={<PublicRoute><AuthPage /></PublicRoute>} />
 
             {/* Protected: form — only accessible after login */}
             <Route
