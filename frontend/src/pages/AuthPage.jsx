@@ -357,9 +357,11 @@ const TESTIMONIALS = [
 ]
 
 const TYPEWRITER_PHRASES = [
-  'Smart Approvals.',
-  'AI-Powered Insights.',
-  'Real-Time Analytics.',
+  'decisions.',
+  'lending.',
+  'risk scoring.',
+  'automation.',
+  'approvals.',
 ]
 
 const AuthPage = () => {
@@ -430,13 +432,9 @@ const AuthPage = () => {
 
           {/* ── Typewriter headline ── */}
           <h1 className="lp-hero-h1">
-            <span className="hero-main">
-              Precision lending. Intelligent decisions.
-            </span>
-            <br />
-            <span className="lp-typewriter-text">
-              {typedWord || '\u00A0'}
-            </span>
+            Precision lending.<br />
+            Smart{' '}
+            <span className="lp-typewriter-text">{typedWord || '\u00A0'}</span>
           </h1>
 
           <p className="lp-hero-p">
