@@ -1,7 +1,46 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../App'
+
+/* ─────────────────────────────────────────────
+   TYPEWRITER HOOK
+   Cycles through phrases, fading each in/out.
+   No cursor shown.
+───────────────────────────────────────────── */
+const useTypewriter = (phrases, typingSpeed = 70, pauseMs = 2200, deleteSpeed = 40) => {
+  const [displayed, setDisplayed] = useState('')
+  const [phraseIdx, setPhraseIdx] = useState(0)
+  const [phase, setPhase]         = useState('typing')  // 'typing' | 'pausing' | 'deleting'
+
+  useEffect(() => {
+    const current = phrases[phraseIdx]
+    let timeout
+
+    if (phase === 'typing') {
+      if (displayed.length < current.length) {
+        timeout = setTimeout(() => {
+          setDisplayed(current.slice(0, displayed.length + 1))
+        }, typingSpeed)
+      } else {
+        timeout = setTimeout(() => setPhase('deleting'), pauseMs)
+      }
+    } else if (phase === 'deleting') {
+      if (displayed.length > 0) {
+        timeout = setTimeout(() => {
+          setDisplayed(displayed.slice(0, -1))
+        }, deleteSpeed)
+      } else {
+        setPhraseIdx(i => (i + 1) % phrases.length)
+        setPhase('typing')
+      }
+    }
+
+    return () => clearTimeout(timeout)
+  }, [displayed, phase, phraseIdx, phrases, typingSpeed, pauseMs, deleteSpeed])
+
+  return displayed
+}
 
 /* ─────────────────────────────────────────────
    SHARED INPUT
@@ -305,11 +344,30 @@ const FEATURES = [
   { icon:'📱', title:'Fully Responsive', desc:'Works on desktop, tablet, and mobile. The 7-step guided form adapts gracefully to any screen size.' },
 ]
 
+const HOW_IT_WORKS = [
+  { num:'01', title:'Fill the 7-Step Form', desc:'Applicant details are collected across seven structured sections — family, residence, employment, banking, credit bureau, health, and compliance.' },
+  { num:'02', title:'Scorecard + ML Analysis', desc:'Your 350-point scorecard runs instantly. Simultaneously, the trained ML model predicts default probability from all 51 variables.' },
+  { num:'03', title:'Instant Decision', desc:'Get STP, L1, L2, or Reject in seconds — with a full field-level breakdown showing exactly where points were gained or lost.' },
+]
+
+const TESTIMONIALS = [
+  { quote: 'CreditSense reduced our average loan appraisal time from 3 days to under 20 minutes. The STP rate on clean profiles is remarkable.', name: 'Arjun Mehta', role: 'Head of Retail Credit, Finova Bank', initials: 'AM', color: '#3d6aff' },
+  { quote: 'The scorecard logic is transparent and explainable — exactly what our compliance team needed. The MongoDB audit trail is a huge bonus.', name: 'Priya Nair', role: 'Risk Analytics Lead, LendRight', initials: 'PN', color: '#00e5a0' },
+  { quote: 'Plugging in our own .pkl model was seamless. Within an hour we had our custom default predictor running alongside the scorecard.', name: 'Rohit Sharma', role: 'Data Science Manager, CreditFlow', initials: 'RS', color: '#ffb020' },
+]
+
+const TYPEWRITER_PHRASES = [
+  'Smart Approvals.',
+  'AI-Powered Insights.',
+  'Real-Time Analytics.',
+]
+
 const AuthPage = () => {
   const { theme, toggleTheme } = useTheme()
-  const [modal, setModal]      = useState(null)
+  const [modal, setModal]       = useState(null)
   const [scrolled, setScrolled] = useState(false)
   const contactRef = useRef(null)
+  const typedWord  = useTypewriter(TYPEWRITER_PHRASES, 65, 2000, 38)
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 50)
@@ -370,14 +428,20 @@ const AuthPage = () => {
             V2.4 AI Risk Engine Live
           </div>
 
+          {/* ── Typewriter headline ── */}
           <h1 className="lp-hero-h1">
-            Precision lending.<br />
-            Smart <span className="lp-hero-gradient">decisions.</span>
+            <span className="hero-main">
+              Precision lending. Intelligent decisions.
+            </span>
+            <br />
+            <span className="lp-typewriter-text">
+              {typedWord || '\u00A0'}
+            </span>
           </h1>
 
           <p className="lp-hero-p">
             Deploy high-performance credit models in minutes. Our proprietary 350-point scorecard
-            uses predictive ML to automate risk assessment for modern lenders.
+            uses predictive ML to automate risk assessment for modern lenders — faster, smarter, and fully auditable.
           </p>
 
           <div className="lp-hero-btns">
@@ -385,6 +449,7 @@ const AuthPage = () => {
             <button className="lp-btn-ghost lp-btn-lg"  onClick={scrollToContact}>Talk to Us</button>
           </div>
 
+          {/* ── Stats strip ── */}
           <div className="lp-stats-row">
             {[{v:'350',l:'Scorecard Points'},{v:'51',l:'Risk Variables'},{v:'4',l:'Approval Levels'},{v:'7',l:'Form Sections'}].map(s => (
               <div key={s.l} className="lp-stat">
@@ -392,6 +457,17 @@ const AuthPage = () => {
                 <div className="lp-stat-l">{s.l}</div>
               </div>
             ))}
+          </div>
+
+          {/* ── Social proof ── */}
+          <div className="lp-proof-strip">
+            <div className="lp-proof-avatars">
+              {[{i:'AM',c:'#3d6aff'},{i:'PN',c:'#00e5a0'},{i:'RS',c:'#ffb020'},{i:'DK',c:'#a855f7'}].map(a => (
+                <div key={a.i} className="lp-proof-avatar" style={{ background: a.c }}>{a.i}</div>
+              ))}
+            </div>
+            <span className="lp-proof-stars">★★★★★</span>
+            <span>Trusted by 50+ lending teams</span>
           </div>
         </div>
       </section>
@@ -410,6 +486,51 @@ const AuthPage = () => {
                 <div className="lp-feat-icon">{f.icon}</div>
                 <h3 className="lp-feat-title">{f.title}</h3>
                 <p className="lp-feat-desc">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ HOW IT WORKS ════════════════════════════════════ */}
+      <section className="lp-how">
+        <div className="lp-how-inner">
+          <div className="lp-section-hd">
+            <span className="lp-section-tag">How It Works</span>
+            <h2 className="lp-section-h2">From application to decision in three steps</h2>
+            <p className="lp-section-sub">No black boxes. Every score is explainable, every decision is traceable.</p>
+          </div>
+          <div className="lp-how-steps">
+            {HOW_IT_WORKS.map(s => (
+              <div key={s.num} className="lp-how-step">
+                <div className="lp-how-num">{s.num}</div>
+                <h3 className="lp-how-step-title">{s.title}</h3>
+                <p className="lp-how-step-desc">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ TESTIMONIALS ════════════════════════════════════ */}
+      <section className="lp-testimonials">
+        <div className="lp-testimonials-inner">
+          <div className="lp-section-hd">
+            <span className="lp-section-tag">What Teams Say</span>
+            <h2 className="lp-section-h2">Trusted by credit risk professionals</h2>
+          </div>
+          <div className="lp-testimonials-grid">
+            {TESTIMONIALS.map(t => (
+              <div key={t.name} className="lp-testimonial-card">
+                <div className="lp-testimonial-stars">★★★★★</div>
+                <p className="lp-testimonial-quote">"{t.quote}"</p>
+                <div className="lp-testimonial-author">
+                  <div className="lp-testimonial-avatar" style={{ background: t.color }}>{t.initials}</div>
+                  <div>
+                    <div className="lp-testimonial-name">{t.name}</div>
+                    <div className="lp-testimonial-role">{t.role}</div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
