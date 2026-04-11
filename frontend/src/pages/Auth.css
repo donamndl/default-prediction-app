@@ -110,12 +110,6 @@
 .lp-theme-btn svg { width: 15px; height: 15px; }
 .lp-theme-btn:hover { color: var(--text-primary); border-color: var(--border-focus); }
 
-.hero-main {
-  white-space: nowrap;
-  display: inline-block;
-  max-width: 100%;
-}
-
 /* Buttons */
 /* ─── Bounce keyframe (shared by all CTA buttons) ─── */
 @keyframes btnBounce {
@@ -293,12 +287,12 @@
 /* Headline */
 .lp-hero-h1 {
   font-family: var(--font-display);
-  font-size: clamp(30px, 4vw, 48px);  /* 🔥 reduced */
+  font-size: clamp(42px, 6vw, 72px);
   font-weight: 800;
-  line-height: 1.15;                   /* slightly more readable */
-  letter-spacing: -1px;                /* less tight */
+  line-height: 1.08;
+  letter-spacing: -2px;
   color: var(--text-primary);
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .lp-hero-gradient {
