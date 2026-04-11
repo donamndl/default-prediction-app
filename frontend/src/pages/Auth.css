@@ -110,7 +110,22 @@
 .lp-theme-btn svg { width: 15px; height: 15px; }
 .lp-theme-btn:hover { color: var(--text-primary); border-color: var(--border-focus); }
 
+.hero-main {
+  white-space: nowrap;
+  display: inline-block;
+  max-width: 100%;
+}
+
 /* Buttons */
+/* ─── Bounce keyframe (shared by all CTA buttons) ─── */
+@keyframes btnBounce {
+  0%   { transform: translateY(0) scale(1); }
+  30%  { transform: translateY(-5px) scale(1.03); }
+  55%  { transform: translateY(-2px) scale(1.01); }
+  75%  { transform: translateY(-4px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); }
+}
+
 .lp-btn-ghost {
   padding: 8px 18px;
   border-radius: var(--radius-md);
@@ -121,12 +136,18 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition);
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition), transform 0.18s ease;
 }
 
 .lp-btn-ghost:hover {
   background: var(--bg-card);
   border-color: var(--border-focus);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(61,106,255,0.12);
+}
+
+.lp-btn-ghost:active {
+  animation: btnBounce 0.45s ease forwards;
 }
 
 .lp-btn-primary {
@@ -139,14 +160,18 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition);
+  transition: background var(--transition), box-shadow var(--transition), transform 0.18s ease;
   box-shadow: 0 4px 14px rgba(61,106,255,0.3);
 }
 
 .lp-btn-primary:hover {
   background: var(--accent-blue-light);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(61,106,255,0.4);
+}
+
+.lp-btn-primary:active {
+  animation: btnBounce 0.45s ease forwards;
 }
 
 .lp-btn-lg {
@@ -154,6 +179,35 @@
   font-size: 15px;
   border-radius: var(--radius-lg);
 }
+
+/* ─── Typewriter ──────────────────────────────────── */
+.lp-typewriter-wrap {
+  display: inline-block;
+  position: relative;
+}
+
+/* The gradient text span sits inside this — JS swaps content */
+.lp-typewriter-text {
+  background: linear-gradient(135deg, #3d6aff, #00d4ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+}
+
+/* Fade in/out animation for phrase transitions */
+@keyframes twFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes twFadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+
+.lp-typewriter-in  { animation: twFadeIn  0.35s ease forwards; }
+.lp-typewriter-out { animation: twFadeOut 0.28s ease forwards; }
 
 /* ════════════════════════════════════════════════════
    HERO
@@ -239,12 +293,12 @@
 /* Headline */
 .lp-hero-h1 {
   font-family: var(--font-display);
-  font-size: clamp(42px, 6vw, 72px);
+  font-size: clamp(30px, 4vw, 48px);  /* 🔥 reduced */
   font-weight: 800;
-  line-height: 1.08;
-  letter-spacing: -2px;
+  line-height: 1.15;                   /* slightly more readable */
+  letter-spacing: -1px;                /* less tight */
   color: var(--text-primary);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .lp-hero-gradient {
@@ -280,7 +334,7 @@
   background: var(--bg-card);
   overflow: hidden;
   max-width: 560px;
-  margin: 0 auto;
+  margin: 0 auto 48px;
 }
 
 .lp-stat {
@@ -306,6 +360,200 @@
   text-transform: uppercase;
   letter-spacing: 0.6px;
   font-weight: 600;
+}
+
+/* ── Social proof strip ─────────────────────────── */
+.lp-proof-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+.lp-proof-avatars {
+  display: flex;
+}
+
+.lp-proof-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-primary);
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -8px;
+  flex-shrink: 0;
+}
+
+.lp-proof-avatar:first-child { margin-left: 0; }
+
+.lp-proof-stars {
+  color: #ffb020;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+/* ── How it works ───────────────────────────────── */
+.lp-how {
+  padding: 88px 32px;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+}
+
+.lp-how-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.lp-how-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  position: relative;
+  margin-top: 56px;
+}
+
+/* Connecting line between steps */
+.lp-how-steps::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  left: calc(100% / 6);
+  right: calc(100% / 6);
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+  opacity: 0.35;
+  z-index: 0;
+}
+
+.lp-how-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.lp-how-num {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid var(--border-focus);
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--accent-blue);
+  margin-bottom: 20px;
+  box-shadow: 0 0 0 6px var(--bg-primary), 0 0 20px rgba(61,106,255,0.15);
+  transition: all 0.3s ease;
+}
+
+.lp-how-step:hover .lp-how-num {
+  background: var(--accent-blue);
+  color: white;
+  box-shadow: 0 0 0 6px var(--bg-primary), 0 0 28px rgba(61,106,255,0.35);
+}
+
+.lp-how-step-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.lp-how-step-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ── Testimonial strip ──────────────────────────── */
+.lp-testimonials {
+  padding: 72px 32px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.lp-testimonials-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.lp-testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 48px;
+}
+
+.lp-testimonial-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: all var(--transition);
+}
+
+.lp-testimonial-card:hover {
+  border-color: var(--border-focus);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(61,106,255,0.1);
+}
+
+.lp-testimonial-stars { color: #ffb020; font-size: 14px; letter-spacing: 2px; }
+
+.lp-testimonial-quote {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  font-style: italic;
+  flex: 1;
+}
+
+.lp-testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lp-testimonial-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.lp-testimonial-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.lp-testimonial-role {
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
 /* ════════════════════════════════════════════════════
@@ -943,6 +1191,12 @@
 [data-theme="light"] .lp-field-label { color: #1a202c; }
 [data-theme="light"] .lp-nav-link { color: #2d3748; }
 [data-theme="light"] .lp-nav-link:hover { background: rgba(0,0,0,0.05); }
+/* New sections */
+[data-theme="light"] .lp-how { background: #eef1f7; }
+[data-theme="light"] .lp-how-num { background: #ffffff; }
+[data-theme="light"] .lp-how-steps::before { opacity: 0.25; }
+[data-theme="light"] .lp-testimonials { background: #f4f7ff; }
+[data-theme="light"] .lp-testimonial-card { background: #ffffff; }
 
 /* ════════════════════════════════════════════════════
    RESPONSIVE
@@ -951,6 +1205,7 @@
   .lp-features-grid { grid-template-columns: repeat(2, 1fr); }
   .lp-footer-info-cols { grid-template-columns: 1fr 1fr; }
   .lp-footer-brand-col { grid-column: span 2; }
+  .lp-testimonials-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
@@ -964,6 +1219,9 @@
   .lp-hero-h1 { font-size: 38px; }
   .lp-stats-row { flex-wrap: wrap; }
   .lp-footer-bottom { flex-direction: column; text-align: center; }
+  .lp-how-steps { grid-template-columns: 1fr; gap: 36px; }
+  .lp-how-steps::before { display: none; }
+  .lp-testimonials-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {
@@ -975,4 +1233,6 @@
   .lp-footer-info-cols { grid-template-columns: 1fr; }
   .lp-footer-brand-col { grid-column: span 1; }
   .modal-box { padding: 24px 20px; }
+  .lp-how { padding: 60px 16px; }
+  .lp-testimonials { padding: 48px 16px; }
 }
