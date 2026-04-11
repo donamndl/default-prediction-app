@@ -190,18 +190,12 @@
 }
 
 /* Fade in/out animation for phrase transitions */
-@keyframes twFadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+@keyframes twReveal {
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes twFadeOut {
-  from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(-8px); }
-}
-
-.lp-typewriter-in  { animation: twFadeIn  0.35s ease forwards; }
-.lp-typewriter-out { animation: twFadeOut 0.28s ease forwards; }
+.lp-typewriter-reveal { animation: twReveal 0.3s ease forwards; }
 
 /* ════════════════════════════════════════════════════
    HERO
@@ -286,20 +280,61 @@
 
 /* Headline */
 .lp-hero-h1 {
-  font-family: var(--font-display);
-  font-size: clamp(42px, 6vw, 72px);
-  font-weight: 800;
-  line-height: 1.08;
-  letter-spacing: -2px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(36px, 4.8vw, 58px);
+  font-weight: 700;
+  line-height: 1.14;
+  letter-spacing: -1.2px;
   color: var(--text-primary);
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
-.lp-hero-gradient {
+/* Line 1 — static, slightly muted so line 2 stands out */
+.lp-hero-line1 {
+  display: block;
+  color: var(--text-primary);
+  font-weight: 700;
+  margin-bottom: 6px;
+  opacity: 0.92;
+}
+
+/* Line 2 — typewriter line with gradient accent */
+.lp-hero-line2 {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lp-hero-line2-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.9em;
+  letter-spacing: -0.5px;
+}
+
+/* Typewriter typed word — gradient coloured */
+.lp-typewriter-text {
   background: linear-gradient(135deg, #3d6aff, #00d4ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  display: inline-block;
+  font-weight: 800;
+  min-width: 2ch;
+  text-align: left;
+}
+
+/* Separator dot between static line and typewriter line */
+.lp-hero-separator {
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #3d6aff, #00d4ff);
+  border-radius: 99px;
+  margin: 16px auto 18px;
+  opacity: 0.6;
 }
 
 .lp-hero-p {
