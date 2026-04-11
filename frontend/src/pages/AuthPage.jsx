@@ -357,11 +357,12 @@ const TESTIMONIALS = [
 ]
 
 const TYPEWRITER_PHRASES = [
-  'decisions.',
-  'lending.',
-  'risk scoring.',
-  'automation.',
-  'approvals.',
+  'faster decisions.',
+  'smarter approvals.',
+  'zero guesswork.',
+  'instant STP.',
+  'real-time risk.',
+  'full auditability.',
 ]
 
 const AuthPage = () => {
@@ -430,11 +431,16 @@ const AuthPage = () => {
             V2.4 AI Risk Engine Live
           </div>
 
-          {/* ── Typewriter headline ── */}
+          {/* ── Hero headline — 2 lines ── */}
           <h1 className="lp-hero-h1">
-            Precision lending.<br />
-            Smart{' '}
-            <span className="lp-typewriter-text">{typedWord || '\u00A0'}</span>
+            <span className="lp-hero-line1">
+              Precision lending. Intelligent decisions.
+            </span>
+            <span className="lp-hero-separator" aria-hidden="true" />
+            <span className="lp-hero-line2">
+              <span className="lp-hero-line2-label">Now with</span>
+              <span className="lp-typewriter-text">{typedWord || '\u00A0'}</span>
+            </span>
           </h1>
 
           <p className="lp-hero-p">
