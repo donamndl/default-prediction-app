@@ -5,7 +5,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import FormContainer from './pages/FormContainer'
 import AuthPage from './pages/AuthPage'
 import './App.css'
-import "./pages/Auth.css";
+import "./pages/Auth.css"
 
 export const ThemeContext = createContext(null)
 export const useTheme = () => useContext(ThemeContext)
