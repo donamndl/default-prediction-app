@@ -290,12 +290,33 @@
 .topbar-user-chip {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 5px 5px 10px;
+  gap: 0;
   border-radius: 99px;
   border: 1px solid var(--border);
   background: var(--bg-card);
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* Clickable profile section (avatar + name) */
+.topbar-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px 5px 5px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition);
+  border-radius: 99px 0 0 99px;
+}
+
+.topbar-profile-btn:hover {
+  background: var(--bg-card-hover);
+}
+
+.topbar-profile-btn:hover .topbar-avatar {
+  box-shadow: 0 0 0 2px var(--accent-blue);
 }
 
 .topbar-avatar {
@@ -323,10 +344,11 @@
 }
 
 .topbar-logout-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
+  width: 34px;
+  height: 34px;
+  border-radius: 0 99px 99px 0;
+  border: none;
+  border-left: 1px solid var(--border);
   background: transparent;
   color: var(--text-muted);
   display: flex;
@@ -341,7 +363,6 @@
 
 .topbar-logout-btn:hover {
   background: rgba(255,77,106,0.1);
-  border-color: rgba(255,77,106,0.3);
   color: #ff4d6a;
 }
 
