@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from '../context/FormContext'
 import { validateStep } from '../utils/validation'
 import { submitApplication } from '../utils/api'
@@ -13,6 +13,7 @@ import Step5Bureau from '../components/forms/Step5Bureau'
 import Step6Health from '../components/forms/Step6Health'
 import Step7Caution from '../components/forms/Step7Caution'
 import ResultsPage from './ResultsPage'
+import ProfileModal, { LogoutConfirmDialog } from "../components/profile/ProfileModal";
 
 const STEP_COMPONENTS = {
   1: Step1Family,
@@ -43,7 +44,11 @@ const FormContainer = () => {
   } = useForm()
 
   const { theme, toggleTheme } = useTheme()
-  const { user, logout } = useAuth()
+  const { user, logout }       = useAuth()
+
+  // ── UI state for profile panel and logout dialog ──
+  const [showProfile, setShowProfile]       = useState(false)
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
   if (result) return <ResultsPage />
 
@@ -54,7 +59,6 @@ const FormContainer = () => {
     const stepErrors = validateStep(currentStep, formData)
     if (Object.keys(stepErrors).length > 0) {
       setErrors(stepErrors)
-      // Scroll to first error
       setTimeout(() => {
         const el = document.querySelector('.field-error-msg')
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -79,9 +83,16 @@ const FormContainer = () => {
     }
   }
 
+  // Called when user confirms logout in the dialog
+  const handleLogoutConfirmed = () => {
+    setShowLogoutConfirm(false)
+    logout()
+  }
+
   return (
     <div className="form-page">
-      {/* Sidebar */}
+
+      {/* ── Sidebar ──────────────────────────────────── */}
       <aside className="sidebar">
         <div className="sidebar-logo">
           <div className="logo-icon">
@@ -105,7 +116,7 @@ const FormContainer = () => {
         <nav className="sidebar-nav">
           {Object.entries(STEP_TITLES).map(([num, title]) => {
             const step = Number(num)
-            const isActive = currentStep === step
+            const isActive   = currentStep === step
             const isComplete = currentStep > step
             return (
               <button
@@ -140,8 +151,9 @@ const FormContainer = () => {
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* ── Main Content ─────────────────────────────── */}
       <main className="form-main">
+
         {/* Top bar */}
         <div className="form-topbar">
           <div className="topbar-row">
@@ -149,7 +161,9 @@ const FormContainer = () => {
               <span className="topbar-step-num">Step {currentStep} of 7</span>
               <h1 className="topbar-step-title">{STEP_TITLES[currentStep]}</h1>
             </div>
+
             <div className="topbar-actions">
+
               {/* Theme toggle */}
               <button
                 type="button"
@@ -170,17 +184,27 @@ const FormContainer = () => {
                 <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
               </button>
 
-              {/* User chip */}
+              {/* User chip — clicking avatar/name opens profile, clicking logout icon opens confirm */}
               {user && (
                 <div className="topbar-user-chip">
-                  <div className="topbar-avatar">
-                    {user.name?.charAt(0).toUpperCase()}
-                  </div>
-                  <span className="topbar-username">{user.name}</span>
+                  {/* Clickable avatar + name → opens profile panel */}
+                  <button
+                    type="button"
+                    className="topbar-profile-btn"
+                    onClick={() => setShowProfile(true)}
+                    title="View / edit your profile"
+                  >
+                    <div className="topbar-avatar">
+                      {user.name?.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="topbar-username">{user.name}</span>
+                  </button>
+
+                  {/* Logout icon → opens confirm dialog */}
                   <button
                     type="button"
                     className="topbar-logout-btn"
-                    onClick={logout}
+                    onClick={() => setShowLogoutConfirm(true)}
                     title="Sign out"
                   >
                     <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -191,6 +215,7 @@ const FormContainer = () => {
               )}
             </div>
           </div>
+
           <div className="topbar-mobile-progress">
             <StepProgress currentStep={currentStep} onStepClick={goToStep} />
           </div>
@@ -231,10 +256,7 @@ const FormContainer = () => {
             className={`btn-next ${isLastStep ? 'btn-submit' : ''}`}
           >
             {isSubmitting ? (
-              <>
-                <span className="spinner" />
-                Analysing...
-              </>
+              <><span className="spinner" />Analysing...</>
             ) : isLastStep ? (
               <>
                 Submit & Analyse
@@ -253,6 +275,19 @@ const FormContainer = () => {
           </button>
         </div>
       </main>
+
+      {/* ── Profile slide-in panel ────────────────────── */}
+      {showProfile && (
+        <ProfileModal onClose={() => setShowProfile(false)} />
+      )}
+
+      {/* ── Logout confirm dialog ─────────────────────── */}
+      {showLogoutConfirm && (
+        <LogoutConfirmDialog
+          onConfirm={handleLogoutConfirmed}
+          onCancel={() => setShowLogoutConfirm(false)}
+        />
+      )}
     </div>
   )
 }
