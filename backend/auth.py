@@ -119,10 +119,13 @@ def _validate_email(email: str) -> bool:
 def _user_to_dict(user: dict) -> dict:
     """Strip sensitive fields before sending to client."""
     return {
-        'id'   : str(user['_id']),
-        'name' : user['name'],
-        'email': user['email'],
-        'created_at': user.get('created_at', ''),
+        'id'          : str(user['_id']),
+        'name'        : user['name'],
+        'email'       : user['email'],
+        'phone'       : user.get('phone', ''),
+        'organisation': user.get('organisation', ''),
+        'role'        : user.get('role', ''),
+        'created_at'  : user.get('created_at', ''),
     }
 
 
@@ -235,3 +238,92 @@ def me():
     if not user:
         return jsonify({'status': 'error', 'message': 'User not found'}), 404
     return jsonify({'status': 'success', 'user': _user_to_dict(user)})
+
+
+@auth_bp.route('/profile', methods=['PUT'])
+@require_auth
+def update_profile():
+    """
+    Update user profile fields.
+    Body: { name, email, phone?, organisation?, role? }
+    """
+    from bson import ObjectId
+    data = request.get_json(silent=True) or {}
+
+    name         = (data.get('name', '')         or '').strip()
+    email        = (data.get('email', '')         or '').strip().lower()
+    phone        = (data.get('phone', '')         or '').strip()
+    organisation = (data.get('organisation', '')  or '').strip()
+    role         = (data.get('role', '')          or '').strip()
+
+    # Validate
+    errors = {}
+    if not name:
+        errors['name'] = 'Name is required'
+    if not email:
+        errors['email'] = 'Email is required'
+    elif not _validate_email(email):
+        errors['email'] = 'Enter a valid email address'
+
+    if errors:
+        return jsonify({'status': 'error', 'message': list(errors.values())[0], 'errors': errors}), 422
+
+    db = get_db()
+
+    # Check if email is taken by another user
+    existing = db.users.find_one({'email': email, '_id': {'$ne': ObjectId(request.user_id)}})
+    if existing:
+        return jsonify({'status': 'error', 'message': 'This email is already in use by another account'}), 409
+
+    # Build update doc — only set non-empty optional fields
+    update_fields = {
+        'name' : name,
+        'email': email,
+    }
+    if phone:        update_fields['phone']        = phone
+    if organisation: update_fields['organisation'] = organisation
+    if role:         update_fields['role']         = role
+
+    db.users.update_one(
+        {'_id': ObjectId(request.user_id)},
+        {'$set': update_fields}
+    )
+
+    updated_user = db.users.find_one({'_id': ObjectId(request.user_id)})
+    return jsonify({
+        'status': 'success',
+        'message': 'Profile updated successfully',
+        'user': _user_to_dict(updated_user),
+    })
+
+
+@auth_bp.route('/password', methods=['PUT'])
+@require_auth
+def update_password():
+    """
+    Change password.
+    Body: { current_password, new_password }
+    """
+    from bson import ObjectId
+    data             = request.get_json(silent=True) or {}
+    current_password = data.get('current_password', '') or ''
+    new_password     = data.get('new_password',     '') or ''
+
+    if not current_password:
+        return jsonify({'status': 'error', 'message': 'Current password is required'}), 422
+    if not new_password or len(new_password) < 6:
+        return jsonify({'status': 'error', 'message': 'New password must be at least 6 characters'}), 422
+
+    db   = get_db()
+    user = db.users.find_one({'_id': ObjectId(request.user_id)})
+
+    if not user or not _check_password(current_password, user['password'], user['salt']):
+        return jsonify({'status': 'error', 'message': 'Current password is incorrect'}), 401
+
+    hashed, salt = _hash_password(new_password)
+    db.users.update_one(
+        {'_id': ObjectId(request.user_id)},
+        {'$set': {'password': hashed, 'salt': salt}}
+    )
+
+    return jsonify({'status': 'success', 'message': 'Password updated successfully'})
