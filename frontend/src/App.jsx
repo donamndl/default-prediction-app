@@ -6,60 +6,57 @@ import FormContainer from './pages/FormContainer'
 import AuthPage from './pages/AuthPage'
 import './App.css'
 import "./pages/Auth.css"
+import './pages/Dashboard.css'
+import Dashboard from "./pages/Dashboard";
 
 export const ThemeContext = createContext(null)
 export const useTheme = () => useContext(ThemeContext)
-
-/* ─── Protected Route ─────────────────────────────────────────────────
-   Guards the form page — if not logged in, send to /login
-──────────────────────────────────────────────────────────────────────── */
+ 
+/* ── Protected: must be logged in ── */
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth()
   if (loading) return null
   if (!user)   return <Navigate to="/login" replace />
   return children
 }
-
-/* ─── Public Route ────────────────────────────────────────────────────
-   Guards login/register — if already logged in, send to /
-──────────────────────────────────────────────────────────────────────── */
+ 
+/* ── Public: redirect away if already logged in ── */
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth()
   if (loading) return null
-  if (user)    return <Navigate to="/" replace />
+  if (user)    return <Navigate to="/dashboard" replace />
   return children
 }
-
+ 
 function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('cs-theme') || 'dark')
-
+ 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
     localStorage.setItem('cs-theme', theme)
   }, [theme])
-
+ 
   const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark')
-
+ 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <AuthProvider>
         <FormProvider>
           <Routes>
-            {/* Public: login / register — redirect to / if already logged in */}
+            {/* Public — bounce to /dashboard if logged in */}
             <Route path="/login"    element={<PublicRoute><AuthPage /></PublicRoute>} />
             <Route path="/register" element={<PublicRoute><AuthPage /></PublicRoute>} />
-
-            {/* Protected: form — only accessible after login */}
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <FormContainer />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Catch-all → login */}
+ 
+            {/* Protected — dashboard (first screen after login) */}
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+ 
+            {/* Protected — 7-step assessment form */}
+            <Route path="/form"      element={<ProtectedRoute><FormContainer /></ProtectedRoute>} />
+ 
+            {/* / → dashboard if logged in, else /login */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+ 
+            {/* Catch-all */}
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </FormProvider>
@@ -67,5 +64,5 @@ function App() {
     </ThemeContext.Provider>
   )
 }
-
+ 
 export default App
