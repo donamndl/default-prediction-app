@@ -327,3 +327,118 @@ def update_password():
     )
 
     return jsonify({'status': 'success', 'message': 'Password updated successfully'})
+
+
+
+# ─────────────────────────────────────────────
+# OTP — SEND / VERIFY / RESET PASSWORD
+# ─────────────────────────────────────────────
+import random
+import string
+
+def _gen_otp(length=6):
+    return ''.join(random.choices(string.digits, k=length))
+
+
+@auth_bp.route('/send-otp', methods=['POST'])
+@require_auth
+def send_otp():
+    """
+    Generate and store a 6-digit OTP for password reset.
+    In production connect to an SMS/email provider.
+    Body: { method: 'email'|'phone', contact: str }
+    """
+    from bson import ObjectId
+    data    = request.get_json(silent=True) or {}
+    method  = data.get('method', 'email')
+    contact = data.get('contact', '')
+
+    if not contact:
+        return jsonify({'status': 'error', 'message': 'Contact is required'}), 422
+
+    otp     = _gen_otp()
+    expires = (datetime.utcnow() + timedelta(minutes=10)).isoformat()
+
+    db = get_db()
+    db.users.update_one(
+        {'_id': ObjectId(request.user_id)},
+        {'$set': {'otp': otp, 'otp_expires': expires, 'otp_method': method}}
+    )
+
+    # ── In production: send email/SMS here ──
+    # For development the OTP is returned in the response so you can test it.
+    print(f'[OTP] Sent to {contact}: {otp}')
+
+    return jsonify({
+        'status' : 'success',
+        'message': f'OTP sent to {contact}',
+        # Remove the line below in production!
+        'otp_dev': otp
+    })
+
+
+@auth_bp.route('/verify-otp', methods=['POST'])
+@require_auth
+def verify_otp():
+    """Verify the OTP. Body: { otp: str }"""
+    from bson import ObjectId
+    data = request.get_json(silent=True) or {}
+    otp  = (data.get('otp', '') or '').strip()
+
+    if not otp:
+        return jsonify({'status': 'error', 'message': 'OTP is required'}), 422
+
+    db   = get_db()
+    user = db.users.find_one({'_id': ObjectId(request.user_id)})
+
+    if not user or user.get('otp') != otp:
+        return jsonify({'status': 'error', 'message': 'Invalid OTP'}), 401
+
+    if datetime.fromisoformat(user.get('otp_expires', '2000-01-01')) < datetime.utcnow():
+        return jsonify({'status': 'error', 'message': 'OTP has expired. Please request a new one.'}), 401
+
+    # Mark OTP as verified (but keep it so reset-password can double-check)
+    db.users.update_one(
+        {'_id': ObjectId(request.user_id)},
+        {'$set': {'otp_verified': True}}
+    )
+
+    return jsonify({'status': 'success', 'message': 'OTP verified'})
+
+
+@auth_bp.route('/reset-password', methods=['POST'])
+@require_auth
+def reset_password_with_otp():
+    """
+    Reset password after OTP verification.
+    Body: { new_password: str, otp: str }
+    """
+    from bson import ObjectId
+    data         = request.get_json(silent=True) or {}
+    new_password = data.get('new_password', '') or ''
+    otp          = (data.get('otp', '') or '').strip()
+
+    if not new_password or len(new_password) < 6:
+        return jsonify({'status': 'error', 'message': 'New password must be at least 6 characters'}), 422
+
+    db   = get_db()
+    user = db.users.find_one({'_id': ObjectId(request.user_id)})
+
+    if not user:
+        return jsonify({'status': 'error', 'message': 'User not found'}), 404
+
+    # Double-check OTP + verified flag
+    if user.get('otp') != otp or not user.get('otp_verified'):
+        return jsonify({'status': 'error', 'message': 'OTP verification required'}), 401
+
+    if datetime.fromisoformat(user.get('otp_expires', '2000-01-01')) < datetime.utcnow():
+        return jsonify({'status': 'error', 'message': 'OTP has expired'}), 401
+
+    hashed, salt = _hash_password(new_password)
+    db.users.update_one(
+        {'_id': ObjectId(request.user_id)},
+        {'$set':   {'password': hashed, 'salt': salt},
+         '$unset': {'otp': '', 'otp_expires': '', 'otp_method': '', 'otp_verified': ''}}
+    )
+
+    return jsonify({'status': 'success', 'message': 'Password reset successfully'})
