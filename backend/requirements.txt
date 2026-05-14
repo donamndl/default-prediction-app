@@ -8,6 +8,4 @@ joblib
 flask
 flask_cors
 flask_pymongo
-functools
-uuid
 python-dotenv
