@@ -75,6 +75,11 @@ REQUIRED_FIELDS = [
 # ─────────────────────────────────────────────
 # ROUTES
 # ─────────────────────────────────────────────
+@app.route("/")
+def home():
+    return {
+        "message": "Backend Running Successfully"
+    }
 
 @app.route('/api/health', methods=['GET'])
 def health():
