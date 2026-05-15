@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'https://default-prediction-application.vercel.app/api',
+  baseURL: 'https://default-prediction-app-zsh3.vercel.app/api',
   headers: { 'Content-Type': 'application/json' }
 })
 
