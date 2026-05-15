@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
 
   // ── Register ──
   const register = async ({ name, email, password }) => {
-    const res  = await axios.post('/api/auth/register', { name, email, password })
+    const res  = await axios.post('https://default-prediction-application.vercel.app/api/auth/register', { name, email, password })
     const data = res.data
     setUser(data.user)
     setToken(data.token)
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
 
   // ── Login ──
   const login = async ({ email, password }) => {
-    const res  = await axios.post('/api/auth/login', { email, password })
+    const res  = await axios.post('https://default-prediction-application.vercel.app/api/auth/login', { email, password })
     const data = res.data
     setUser(data.user)
     setToken(data.token)
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }) => {
 
   // ── Update profile (name, email, phone, organisation, role) ──
   const updateProfile = async (profileData) => {
-    const res  = await axios.put('/api/auth/profile', profileData)
+    const res  = await axios.put('https://default-prediction-application.vercel.app/api/auth/profile', profileData)
     const data = res.data
     // Merge updated fields back into user state so UI reflects instantly
     setUser(prev => ({ ...prev, ...data.user }))
@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
 
   // ── Change password ──
   const updatePassword = async ({ current_password, new_password }) => {
-    const res = await axios.put('/api/auth/password', { current_password, new_password })
+    const res = await axios.put('https://default-prediction-application.vercel.app/api/auth/password', { current_password, new_password })
     return res.data
   }
 
