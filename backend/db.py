@@ -25,15 +25,40 @@ def get_db():
     """Return the database instance (lazy singleton)."""
     global _client, _db
     if _db is None:
-        uri         = os.getenv('MONGO_URI')
-        db_name     = os.getenv('MONGO_DB_NAME', 'credit_scorecard')
-        _client     = MongoClient(uri, serverSelectionTimeoutMS=5000)
-        _db         = _client[db_name]
+        # 1. Get the URI from Environment Variables
+        uri = os.getenv('MONGO_URI')
+        
+        # 2. Check if we are on Vercel and missing the URI
+        if not uri:
+            # If we are running locally, default to localhost
+            # If we are on Vercel, this will still fail, but we can see why in logs
+            uri = "mongodb://localhost:27017"
+            print("WARNING: MONGO_URI not found in environment variables. Falling back to localhost.")
+
+        db_name = os.getenv('MONGO_DB_NAME', 'credit_scorecard')
+        
+        # 3. Initialize the client
+        _client = MongoClient(uri, serverSelectionTimeoutMS=5000)
+        _db = _client[db_name]
 
         # Create indexes on first connect
         _ensure_indexes(_db)
 
     return _db
+
+# def get_db():
+#     """Return the database instance (lazy singleton)."""
+#     global _client, _db
+#     if _db is None:
+#         uri         = os.getenv('MONGO_URI')
+#         db_name     = os.getenv('MONGO_DB_NAME', 'credit_scorecard')
+#         _client     = MongoClient(uri, serverSelectionTimeoutMS=5000)
+#         _db         = _client[db_name]
+
+#         # Create indexes on first connect
+#         _ensure_indexes(_db)
+
+#     return _db
 
 
 def _ensure_indexes(db):
